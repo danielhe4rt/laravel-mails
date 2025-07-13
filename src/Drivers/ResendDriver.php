@@ -1,9 +1,8 @@
 <?php
 
-namespace Vormkracht10\Mails\Drivers;
+namespace Backstage\Mails\Drivers;
 
 use Backstage\Mails\Contracts\MailDriverContract;
-use Backstage\Mails\Drivers\MailDriver;
 use Backstage\Mails\Enums\EventType;
 use Illuminate\Mail\Events\MessageSending;
 

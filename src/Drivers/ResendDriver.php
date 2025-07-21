@@ -21,7 +21,9 @@ class ResendDriver extends MailDriver implements MailDriverContract
 
     public function getUuidFromPayload(array $payload): ?string
     {
-        return $payload['data']['email_id'];
+        return collect($payload['data']['headers'])
+            ->where('name', config('mails.headers.uuid'))
+            ->first()['value'] ?? null;
     }
 
     protected function getTimestampFromPayload(array $payload): string
@@ -31,7 +33,6 @@ class ResendDriver extends MailDriver implements MailDriverContract
 
     public function eventMapping(): array
     {
-
         return [
             EventType::CLICKED->value => ['type' => 'email.clicked'],
             EventType::COMPLAINED->value => ['type' => 'email.complained'],
@@ -39,7 +40,6 @@ class ResendDriver extends MailDriver implements MailDriverContract
             EventType::HARD_BOUNCED->value => ['type' => 'email.bounced'],
             EventType::OPENED->value => ['type' => 'email.opened'],
             EventType::SOFT_BOUNCED->value => ['type' => 'email.delivery_delayed'],
-            EventType::UNSUBSCRIBED->value => ['type' => 'SubscriptionChange'],
         ];
     }
 
@@ -54,7 +54,7 @@ class ResendDriver extends MailDriver implements MailDriverContract
 
     public function attachUuidToMail(MessageSending $event, string $uuid): MessageSending
     {
-        $event->message->getHeaders()->addTextHeader('X-Resend-Metadata-' . config('mails.headers.uuid'), $uuid);
+        $event->message->getHeaders()->addTextHeader(config('mails.headers.uuid'), $uuid);
 
         return $event;
     }
